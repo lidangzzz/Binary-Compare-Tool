@@ -4,7 +4,7 @@
 using namespace::std;
 #pragma warning(disable:4996)
 
-const __int64 sz = 1000000000;
+const __int64 sz = 50000000;
 
 void compare(char* s1, char* s2) {
 	FILE *f1, *f2;
@@ -48,5 +48,6 @@ int main(int nNumberofArgs, char* pszArgs[]) {
 		return 0;
 	}
 	compare(pszArgs[1], pszArgs[2]);
+	cout << "The two binary are exactly the same." <<endl;
 	return 0;
 }
