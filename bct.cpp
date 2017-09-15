@@ -23,7 +23,6 @@ void compare(char* s1, char* s2) {
 
 	if (size1 != size2) {
 		cout << "Size doesn't match" << endl;
-		return;
 	}
 
 	int i = 0;
