@@ -4,12 +4,19 @@ A command-line tool to compare two binary files and identify the first point of 
 
 ## Compilation
 
-You can compile `bct.cpp` using a C++ compiler like g++.
+You can compile the project using the provided Makefile:
 
 ```bash
-g++ bct.cpp -o bct
+make
 ```
-This will produce an executable file named `bct`.
+
+Or manually using a C++ compiler like g++:
+
+```bash
+g++ bct.cpp bct_lib.cpp -o bct
+```
+
+Either way, this will produce an executable file named `bct`.
 
 ## Usage
 
@@ -44,12 +51,16 @@ Replace `<file1_path>` and `<file2_path>` with the actual paths to the files you
 
 ## Running Tests
 
-A test script `run_tests.sh` is included to verify the functionality of `bct`.
-To run the tests:
+There are two types of tests available:
 
-1.  Ensure you have compiled `bct.cpp` and the `bct` executable is present in the root directory.
+### Integration Tests
+
+A test script `run_tests.sh` is included to verify the functionality of `bct` with various file scenarios.
+To run the integration tests:
+
+1.  Ensure you have compiled the project and the `bct` executable is present in the root directory.
     ```bash
-    g++ bct.cpp -o bct
+    make
     ```
 2.  Make the test script executable (if it isn't already):
     ```bash
@@ -59,4 +70,39 @@ To run the tests:
     ```bash
     ./run_tests.sh
     ```
+    
 The script will output PASS or FAIL for each test case.
+
+### Unit Tests
+
+Unit tests are also available to test specific functionality of the comparison logic.
+To run the unit tests:
+
+1.  Compile the unit tests:
+    ```bash
+    make unit_tests
+    ```
+2.  Run the unit tests:
+    ```bash
+    ./unit_tests
+    ```
+
+### Running All Tests
+
+You can run all tests at once using the Makefile:
+
+```bash
+make test
+```
+
+This will compile both the main program and unit tests, then run both test suites.
+
+## Project Structure
+
+*   `bct.cpp`: The main program entry point.
+*   `bct_lib.cpp`: The core binary comparison logic.
+*   `bct_lib.h`: Header file for the comparison library.
+*   `run_tests.sh`: Integration test script to verify the functionality of the tool.
+*   `unit_tests.cpp`: Unit tests for the comparison logic.
+*   `run_unit_tests.sh`: Script to compile and run the unit tests.
+*   `Makefile`: Build configuration for compiling and testing the project.

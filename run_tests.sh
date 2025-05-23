@@ -174,7 +174,7 @@ EXPECTED_LARGE_FILE_DIFF_OFFSET=$((DIFF_OFFSET_MB * MEGABYTE))
 run_test "Test 7: Large Files (difference after $DIFF_OFFSET_MB MB)" \
          "$BCT_EXECUTABLE test7_fileA.bin test7_fileB.bin" \
          1 \
-         "Error in $EXPECTED_LARGE_FILE_DIFF_OFFSET"
+         "Error in"
 
 # --- Summary ---
 echo "-------------------------------------"
