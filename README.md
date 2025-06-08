@@ -4,12 +4,19 @@ A command-line tool to compare two binary files and identify the first point of 
 
 ## Compilation
 
-You can compile `bct.cpp` using a C++ compiler like g++.
+You can compile the Binary Compare Tool using the provided Makefile:
 
 ```bash
-g++ bct.cpp -o bct
+make bct
 ```
+
 This will produce an executable file named `bct`.
+
+Alternatively, you can compile it manually using a C++ compiler like g++:
+
+```bash
+g++ bct_main.cpp bct_lib.cpp -o bct
+```
 
 ## Usage
 
@@ -44,12 +51,14 @@ Replace `<file1_path>` and `<file2_path>` with the actual paths to the files you
 
 ## Running Tests
 
-A test script `run_tests.sh` is included to verify the functionality of `bct`.
-To run the tests:
+### Integration Tests
 
-1.  Ensure you have compiled `bct.cpp` and the `bct` executable is present in the root directory.
+A test script `run_tests.sh` is included to verify the functionality of `bct`.
+To run the integration tests:
+
+1.  Ensure you have compiled the `bct` executable:
     ```bash
-    g++ bct.cpp -o bct
+    make bct
     ```
 2.  Make the test script executable (if it isn't already):
     ```bash
@@ -60,3 +69,27 @@ To run the tests:
     ./run_tests.sh
     ```
 The script will output PASS or FAIL for each test case.
+
+### Unit Tests
+
+Unit tests are implemented using Google Test (gtest). To run the unit tests:
+
+1. Ensure you have the Google Test library installed:
+   ```bash
+   apt-get install -y libgtest-dev cmake
+   cd /usr/src/googletest && cmake . && make && cp lib/*.a /usr/lib/
+   ```
+
+2. Build and run the unit tests:
+   ```bash
+   make bct_test
+   ./bct_test
+   ```
+
+The unit tests cover various scenarios including:
+- Identical files
+- Files with differences at various positions
+- Empty files
+- Non-existent files
+- Files with different sizes
+- Larger files
