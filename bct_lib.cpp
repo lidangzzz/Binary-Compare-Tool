@@ -1,14 +1,13 @@
-// Binary Compare Tool (bct)
+// Binary Compare Tool (bct) - Library Implementation
 // Compares two binary files byte-by-byte and reports the first difference or confirms they are identical.
 
+#include "bct.h"
 #include <iostream>
 #include <fstream>
 #include <vector>   // For std::vector
 #include <cstdio>   // For ferror, fclose, FILE, fopen, fread, etc. (though often included via iostream/fstream)
 #include <cstdint>  // For int64_t
-// It's good practice to include cstddef for size_t, but often available via other headers.
 
-// Using namespace std; // It's often better to use std:: prefix explicitly.
 #ifdef _MSC_VER
 #pragma warning(disable:4996) // For MSVC specific warnings like fopen_s
 #endif
@@ -106,7 +105,7 @@ bool compare(char* s1_path, char* s2_path) {
 			break; // Normal EOF, end of loop
 		}
 
-		for (long i = 0; i < bytes_read1; i++) {
+		for (size_t i = 0; i < bytes_read1; i++) {
 			if (m1[i] != m2[i]) {
 				std::cout << "Error in " << current_block_offset + i << std::endl; // As per original, message to cout
 				fclose(f1);
@@ -126,32 +125,4 @@ bool compare(char* s1_path, char* s2_path) {
 	fclose(f1);
 	fclose(f2);
 	return true;
-}
-
-/**
- * @brief Main entry point for the Binary Compare Tool.
- * 
- * Parses command-line arguments (expecting two file paths),
- * calls the compare function, and sets the exit code based on the result.
- * 
- * @param nNumberofArgs Number of command-line arguments.
- * @param pszArgs Array of command-line argument strings.
- * @return 0 if files are identical, 1 if they differ or an error occurs.
- */
-int main(int nNumberofArgs, char* pszArgs[]) {
-	if (nNumberofArgs != 3) {
-		std::cout << "Usage: bct <file1> <file2>" << std::endl;
-		return 1; // Indicate error
-	}
-
-	bool are_identical = compare(pszArgs[1], pszArgs[2]);
-
-	if (are_identical) {
-		std::cout << "The two binary are exactly the same." << std::endl;
-		return 0; // Success
-	} else {
-		// The 'compare' function already prints specific error messages (e.g., size mismatch, read error, difference location).
-		// So, no additional message is strictly needed here, just a different exit code.
-		return 1; // Indicate difference or error
-	}
 }
