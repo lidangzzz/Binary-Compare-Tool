@@ -150,6 +150,105 @@ TEST_F(BCTTest, LargerFilesWithDifference) {
     EXPECT_FALSE(compare(file1, file2));
 }
 
+// Test case for one empty and one non-empty file
+TEST_F(BCTTest, OneEmptyAndOneNonEmptyFile) {
+    createTestFile("test_empty1.bin", {});
+    std::vector<unsigned char> content = {'A', 'B', 'C'};
+    createTestFile("test_different1.bin", content);
+
+    char file1[] = "test_empty1.bin";
+    char file2[] = "test_different1.bin";
+
+    EXPECT_FALSE(compare(file1, file2));
+}
+
+// Test case for files exactly the size of the buffer
+TEST_F(BCTTest, FilesAtBufferSize) {
+    const int64_t bufferSize = 50000000;
+    std::vector<unsigned char> content(bufferSize, 'A');
+    createTestFile("test_different1.bin", content);
+    createTestFile("test_different2.bin", content);
+
+    char file1[] = "test_different1.bin";
+    char file2[] = "test_different2.bin";
+
+    EXPECT_TRUE(compare(file1, file2));
+}
+
+// Test case for files exactly the size of the buffer with a difference at the end
+TEST_F(BCTTest, FilesAtBufferSizeWithDifference) {
+    const int64_t bufferSize = 50000000;
+    std::vector<unsigned char> content1(bufferSize, 'A');
+    std::vector<unsigned char> content2(bufferSize, 'A');
+    content2[bufferSize - 1] = 'B'; // Difference at the very end
+
+    createTestFile("test_different1.bin", content1);
+    createTestFile("test_different2.bin", content2);
+
+    char file1[] = "test_different1.bin";
+    char file2[] = "test_different2.bin";
+
+    EXPECT_FALSE(compare(file1, file2));
+}
+
+// Test case for files that are a multiple of the buffer size
+TEST_F(BCTTest, FilesMultipleOfBufferSize) {
+    const int64_t bufferSize = 50000000;
+    std::vector<unsigned char> content(bufferSize * 2, 'A');
+    createTestFile("test_different1.bin", content);
+    createTestFile("test_different2.bin", content);
+
+    char file1[] = "test_different1.bin";
+    char file2[] = "test_different2.bin";
+
+    EXPECT_TRUE(compare(file1, file2));
+}
+
+// Test case for files that are a multiple of the buffer size with a difference
+TEST_F(BCTTest, FilesMultipleOfBufferSizeWithDifference) {
+    const int64_t bufferSize = 50000000;
+    std::vector<unsigned char> content1(bufferSize * 2, 'A');
+    std::vector<unsigned char> content2(bufferSize * 2, 'A');
+    content2[bufferSize + 100] = 'B'; // Difference in the second chunk
+
+    createTestFile("test_different1.bin", content1);
+    createTestFile("test_different2.bin", content2);
+
+    char file1[] = "test_different1.bin";
+    char file2[] = "test_different2.bin";
+
+    EXPECT_FALSE(compare(file1, file2));
+}
+
+// Test case for files larger than the buffer size
+TEST_F(BCTTest, FilesLargerThanBufferSize) {
+    const int64_t bufferSize = 50000000;
+    std::vector<unsigned char> content(bufferSize + 1024, 'A');
+    createTestFile("test_different1.bin", content);
+    createTestFile("test_different2.bin", content);
+
+    char file1[] = "test_different1.bin";
+    char file2[] = "test_different2.bin";
+
+    EXPECT_TRUE(compare(file1, file2));
+}
+
+// Test case for files larger than the buffer size with a difference
+TEST_F(BCTTest, FilesLargerThanBufferSizeWithDifference) {
+    const int64_t bufferSize = 50000000;
+    std::vector<unsigned char> content1(bufferSize + 1024, 'A');
+    std::vector<unsigned char> content2(bufferSize + 1024, 'A');
+    content2[bufferSize + 500] = 'B'; // Difference in the second chunk
+
+    createTestFile("test_different1.bin", content1);
+    createTestFile("test_different2.bin", content2);
+
+    char file1[] = "test_different1.bin";
+    char file2[] = "test_different2.bin";
+
+    EXPECT_FALSE(compare(file1, file2));
+}
+
 // Main function to run all tests
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);

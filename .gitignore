@@ -1,0 +1,7 @@
+# Build artifacts
+*.o
+bct
+bct_test
+
+# Test files
+*.bin
