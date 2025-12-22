@@ -1,5 +1,6 @@
 CXX = g++
 CXXFLAGS = -std=c++11 -Wall -Wextra
+TEST_CXXFLAGS = -std=c++14 -Wall -Wextra
 LDFLAGS = -lgtest -lgtest_main -pthread
 
 all: bct bct_test
@@ -8,7 +9,7 @@ bct: bct_main.o bct_lib.o
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 bct_test: bct_test.cpp bct_lib.o
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+	$(CXX) $(TEST_CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 bct_main.o: bct_main.cpp bct.h
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
