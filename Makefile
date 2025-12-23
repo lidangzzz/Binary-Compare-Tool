@@ -8,7 +8,7 @@ bct: bct_main.o bct_lib.o
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 bct_test: bct_test.cpp bct_lib.o
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -std=c++14 -o $@ $^ $(LDFLAGS) -lgtest -lgtest_main -pthread
 
 bct_main.o: bct_main.cpp bct.h
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
