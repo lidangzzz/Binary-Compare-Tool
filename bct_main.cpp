@@ -2,7 +2,7 @@
 // Compares two binary files byte-by-byte and reports the first difference or confirms they are identical.
 
 #include "bct.h"
-#include <iostream>
+#include <cstdio>
 
 /**
  * @brief Main entry point for the Binary Compare Tool.
@@ -16,14 +16,14 @@
  */
 int main(int nNumberofArgs, char* pszArgs[]) {
 	if (nNumberofArgs != 3) {
-		std::cout << "Usage: bct <file1> <file2>" << std::endl;
+		printf("Usage: bct <file1> <file2>\n");
 		return 1; // Indicate error
 	}
 
 	bool are_identical = compare(pszArgs[1], pszArgs[2]);
 
 	if (are_identical) {
-		std::cout << "The two binary are exactly the same." << std::endl;
+		printf("The two binary are exactly the same.\n");
 		return 0; // Success
 	} else {
 		// The 'compare' function already prints specific error messages (e.g., size mismatch, read error, difference location).
