@@ -1,5 +1,7 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall -Wextra
+# Upgraded to C++14 for modern language features.
+# Added -O3 flag for aggressive performance optimization.
+CXXFLAGS = -std=c++14 -Wall -Wextra -O3
 LDFLAGS = -lgtest -lgtest_main -pthread
 
 all: bct bct_test
