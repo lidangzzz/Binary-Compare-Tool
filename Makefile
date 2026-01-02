@@ -1,5 +1,6 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall -Wextra
+# Use C++14 standard, required by the installed version of Google Test.
+CXXFLAGS = -std=c++14 -Wall -Wextra
 LDFLAGS = -lgtest -lgtest_main -pthread
 
 all: bct bct_test
