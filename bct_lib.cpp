@@ -7,6 +7,7 @@
 #include <vector>   // For std::vector
 #include <cstdio>   // For ferror, fclose, FILE, fopen, fread, etc. (though often included via iostream/fstream)
 #include <cstdint>  // For int64_t
+#include <cstring>  // For memcmp
 
 #ifdef _MSC_VER
 #pragma warning(disable:4996) // For MSVC specific warnings like fopen_s
@@ -105,16 +106,22 @@ bool compare(char* s1_path, char* s2_path) {
 			break; // Normal EOF, end of loop
 		}
 
-		for (size_t i = 0; i < bytes_read1; i++) {
-			if (m1[i] != m2[i]) {
-				std::cout << "Error in " << current_block_offset + i << std::endl; // As per original, message to cout
-				fclose(f1);
-				fclose(f2);
-				return false; // Files differ
+		// ⚡ Bolt Optimization: Use memcmp for faster block comparison.
+		// memcmp is highly optimized (often using SIMD instructions) to compare memory blocks
+		// far faster than a byte-by-byte loop. The loop is now only needed to find the
+		// exact offset if a difference is found.
+		if (memcmp(m1, m2, bytes_read1) != 0) {
+			for (size_t i = 0; i < bytes_read1; i++) {
+				if (m1[i] != m2[i]) {
+					std::cout << "Error in " << current_block_offset + i << std::endl;
+					fclose(f1);
+					fclose(f2);
+					return false; // Files differ
+				}
 			}
 		}
 		
-		current_block_offset = ftell(f1); // Update offset based on where f1 pointer is
+		current_block_offset += bytes_read1; // Manually increment offset
 		
 		if (size1 > 0) { // To avoid division by zero for empty files (though already handled)
 			std::cout << "Progress: " << (static_cast<double>(current_block_offset) / size1) * 100.0 << "%"<< std::endl;

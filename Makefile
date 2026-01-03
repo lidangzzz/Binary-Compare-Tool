@@ -1,5 +1,6 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall -Wextra
+# Use C++14 standard for compatibility with modern gtest versions
+CXXFLAGS = -std=c++14 -Wall -Wextra
 LDFLAGS = -lgtest -lgtest_main -pthread
 
 all: bct bct_test
