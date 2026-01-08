@@ -1,0 +1,4 @@
+# Ignore build artifacts
+*.o
+bct
+bct_test
