@@ -7,6 +7,7 @@
 #include <vector>   // For std::vector
 #include <cstdio>   // For ferror, fclose, FILE, fopen, fread, etc. (though often included via iostream/fstream)
 #include <cstdint>  // For int64_t
+#include <cstring>  // For memcmp
 
 #ifdef _MSC_VER
 #pragma warning(disable:4996) // For MSVC specific warnings like fopen_s
@@ -105,12 +106,17 @@ bool compare(char* s1_path, char* s2_path) {
 			break; // Normal EOF, end of loop
 		}
 
-		for (size_t i = 0; i < bytes_read1; i++) {
-			if (m1[i] != m2[i]) {
-				std::cout << "Error in " << current_block_offset + i << std::endl; // As per original, message to cout
-				fclose(f1);
-				fclose(f2);
-				return false; // Files differ
+		// ⚡ BOLT: Replaced the byte-by-byte loop with memcmp for a massive performance boost.
+		// memcmp is highly optimized to compare blocks of memory, often using hardware-specific instructions.
+		if (memcmp(m1, m2, bytes_read1) != 0) {
+			// If the blocks are not identical, we must find the exact byte that differs to maintain original functionality.
+			for (size_t i = 0; i < bytes_read1; i++) {
+				if (m1[i] != m2[i]) {
+					std::cout << "Error in " << current_block_offset + i << std::endl;
+					fclose(f1);
+					fclose(f2);
+					return false; // Files differ
+				}
 			}
 		}
 		
