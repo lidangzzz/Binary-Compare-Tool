@@ -7,6 +7,7 @@
 #include <vector>   // For std::vector
 #include <cstdio>   // For ferror, fclose, FILE, fopen, fread, etc. (though often included via iostream/fstream)
 #include <cstdint>  // For int64_t
+#include <cstring>  // For memcmp
 
 #ifdef _MSC_VER
 #pragma warning(disable:4996) // For MSVC specific warnings like fopen_s
@@ -70,6 +71,7 @@ bool compare(char* s1_path, char* s2_path) {
     }
 
 	int64_t current_block_offset = 0; 
+	int last_reported_progress = -1; // ⚡ Bolt: Track progress to reduce cout frequency.
 
 	while (current_block_offset < size1) {
 		size_t bytes_read1 = fread(m1, sizeof(unsigned char), sz, f1);
@@ -105,19 +107,30 @@ bool compare(char* s1_path, char* s2_path) {
 			break; // Normal EOF, end of loop
 		}
 
-		for (size_t i = 0; i < bytes_read1; i++) {
-			if (m1[i] != m2[i]) {
-				std::cout << "Error in " << current_block_offset + i << std::endl; // As per original, message to cout
-				fclose(f1);
-				fclose(f2);
-				return false; // Files differ
-			}
-		}
+        // ⚡ Bolt: Use memcmp for a significant performance boost over byte-by-byte loops.
+        // This is much faster as it's a highly optimized intrinsic function.
+        if (memcmp(m1, m2, bytes_read1) != 0) {
+            // If memcmp finds a difference, we still need to find the exact offset.
+            for (size_t i = 0; i < bytes_read1; i++) {
+                if (m1[i] != m2[i]) {
+                    std::cout << "Error in " << current_block_offset + i << std::endl;
+                    fclose(f1);
+                    fclose(f2);
+                    return false; // Files differ
+                }
+            }
+        }
 		
 		current_block_offset = ftell(f1); // Update offset based on where f1 pointer is
 		
-		if (size1 > 0) { // To avoid division by zero for empty files (though already handled)
-			std::cout << "Progress: " << (static_cast<double>(current_block_offset) / size1) * 100.0 << "%"<< std::endl;
+        // ⚡ Bolt: Throttle progress reporting to avoid excessive I/O.
+        // Only report when the integer percentage value changes.
+		if (size1 > 0) {
+			int current_progress = static_cast<int>((static_cast<double>(current_block_offset) / size1) * 100.0);
+			if (current_progress > last_reported_progress) {
+				std::cout << "Progress: " << current_progress << "%" << std::endl;
+				last_reported_progress = current_progress;
+			}
 		}
 	}
 
