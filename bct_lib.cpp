@@ -70,6 +70,7 @@ bool compare(char* s1_path, char* s2_path) {
     }
 
 	int64_t current_block_offset = 0; 
+	int last_progress_milestone = -1; // For throttled progress reporting
 
 	while (current_block_offset < size1) {
 		size_t bytes_read1 = fread(m1, sizeof(unsigned char), sz, f1);
@@ -116,8 +117,14 @@ bool compare(char* s1_path, char* s2_path) {
 		
 		current_block_offset = ftell(f1); // Update offset based on where f1 pointer is
 		
-		if (size1 > 0) { // To avoid division by zero for empty files (though already handled)
-			std::cout << "Progress: " << (static_cast<double>(current_block_offset) / size1) * 100.0 << "%"<< std::endl;
+		// Throttled progress reporting to reduce I/O overhead.
+		// Reports progress at intervals of roughly 10%.
+		if (size1 > 0) {
+			int current_progress_milestone = static_cast<int>((static_cast<double>(current_block_offset) / size1) * 10.0);
+			if (current_progress_milestone > last_progress_milestone) {
+				last_progress_milestone = current_progress_milestone;
+				std::cout << "Progress: " << last_progress_milestone * 10 << "%" << std::endl;
+			}
 		}
 	}
 
