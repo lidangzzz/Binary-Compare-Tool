@@ -1,0 +1,6 @@
+# C++ build artifacts
+*.o
+*.out
+*.exe
+bct
+bct_test
