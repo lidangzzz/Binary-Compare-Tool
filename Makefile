@@ -1,5 +1,6 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall -Wextra
+# -O2 enables compiler optimizations for performance.
+CXXFLAGS = -std=c++11 -Wall -Wextra -O2
 LDFLAGS = -lgtest -lgtest_main -pthread
 
 all: bct bct_test
