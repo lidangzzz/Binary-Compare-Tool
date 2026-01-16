@@ -1,6 +1,3 @@
-// Binary Compare Tool (bct) - Main Program
-// Compares two binary files byte-by-byte and reports the first difference or confirms they are identical.
-
 #include "bct.h"
 #include <iostream>
 
