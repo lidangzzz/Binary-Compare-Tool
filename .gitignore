@@ -1,0 +1,4 @@
+# Build artifacts
+bct
+bct_test
+*.o
