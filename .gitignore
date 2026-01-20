@@ -1,0 +1,6 @@
+# Ignore object files
+*.o
+
+# Ignore executables
+bct
+bct_test
