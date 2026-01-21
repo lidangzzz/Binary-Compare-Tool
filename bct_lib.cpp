@@ -7,6 +7,7 @@
 #include <vector>   // For std::vector
 #include <cstdio>   // For ferror, fclose, FILE, fopen, fread, etc. (though often included via iostream/fstream)
 #include <cstdint>  // For int64_t
+#include <cstring>  // For memcpy
 
 #ifdef _MSC_VER
 #pragma warning(disable:4996) // For MSVC specific warnings like fopen_s
@@ -105,14 +106,39 @@ bool compare(char* s1_path, char* s2_path) {
 			break; // Normal EOF, end of loop
 		}
 
-		for (size_t i = 0; i < bytes_read1; i++) {
-			if (m1[i] != m2[i]) {
-				std::cout << "Error in " << current_block_offset + i << std::endl; // As per original, message to cout
-				fclose(f1);
-				fclose(f2);
-				return false; // Files differ
-			}
-		}
+		// ⚡ Bolt: Optimize by comparing word-by-word (uint64_t) safely.
+        // This is faster than a byte-by-byte check and avoids unaligned memory access,
+        // which can cause crashes or performance penalties on some architectures.
+        const size_t word_size = sizeof(uint64_t);
+        size_t i = 0;
+        uint64_t val1, val2;
+
+        // Compare word by word safely using memcpy
+        for (; i + word_size <= bytes_read1; i += word_size) {
+            memcpy(&val1, m1 + i, word_size);
+            memcpy(&val2, m2 + i, word_size);
+            if (val1 != val2) {
+                // If words differ, find the exact byte of difference within this word
+                for (size_t j = 0; j < word_size; ++j) {
+                    if (m1[i + j] != m2[i + j]) {
+                        std::cout << "Error in " << current_block_offset + i + j << std::endl;
+                        fclose(f1);
+                        fclose(f2);
+                        return false;
+                    }
+                }
+            }
+        }
+
+        // Compare any remaining bytes
+        for (; i < bytes_read1; i++) {
+            if (m1[i] != m2[i]) {
+                std::cout << "Error in " << current_block_offset + i << std::endl;
+                fclose(f1);
+                fclose(f2);
+                return false; // Files differ
+            }
+        }
 		
 		current_block_offset = ftell(f1); // Update offset based on where f1 pointer is
 		
