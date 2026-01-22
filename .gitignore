@@ -1,0 +1,6 @@
+# Binaries
+bct
+bct_test
+
+# Object files
+*.o
