@@ -1,0 +1,5 @@
+*.o
+bct
+bct_test
+large1.bin
+large2.bin
